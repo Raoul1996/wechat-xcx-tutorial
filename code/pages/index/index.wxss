@@ -1,0 +1,5 @@
+/* index.wxss */
+.home{
+    color: red;
+    font-size: 28rpx;
+}
