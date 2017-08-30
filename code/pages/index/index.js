@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-import util from '../../utils/index';
-import config from '../../utils/config';
+import util from '../../utils/index'
+import config from '../../utils/config'
 
-let app = getApp();
-let isDEV = config.isDev;
+let app = getApp()
+let isDEV = config.isDev
 
 // 后继的代码都会放在此对象中
 let handler = {
@@ -16,7 +16,7 @@ let handler = {
     hasMore: true,// 用来判断下拉加载更多内容操作
     articleList: [], // 存放文章列表数据，与视图相关联
     defaultImg: config.defaultImg
-  }, 
+  },
   onLoad(options) {
     this.setData({
       hiddenLoading: false
@@ -41,9 +41,9 @@ let handler = {
       .then(res => {
         if (res && res.status === 0 && res.data && res.data.length) {
           // 正常数据 do something
-          let articleData = res.data;
+          let articleData = res.data
           //格式化原始数据
-          let formatData = this.formatArticleData(articleData);
+          let formatData = this.formatArticleData(articleData)
           this.renderArticle(formatData)
         }
         /*
@@ -51,10 +51,10 @@ let handler = {
         * 处理方式：弹出异常提示信息（默认提示信息）并设置下拉加载功能不可用
         */
         else if (this.data.page === 1 && res.data && res.data.length === 0) {
-          util.alert();
+          util.alert()
           this.setData({
             hasMore: false
-          });
+          })
         }
         /*
         * 如果非第一页没有数据，那说明没有数据了，停用下拉加载功能即可
@@ -62,42 +62,42 @@ let handler = {
         else if (this.data.page !== 1 && res.data && res.data.length === 0) {
           this.setData({
             hasMore: false
-          });
+          })
         }
         /*
         * 返回异常错误
         * 展示后端返回的错误信息，并设置下拉加载功能不可用
         */
         else {
-          util.alert('提示', res);
+          util.alert('提示', res)
           this.setData({
             hasMore: false
-          });
-          return null;
+          })
+          return null
         }
-      });
+      })
   },
   /*
 * 格式化文章列表数据
 */
   formatArticleData(data) {
-    let formatData = undefined;
+    let formatData = undefined
     if (data && data.length) {
       formatData = data.map((group) => {
         // 格式化日期
-        group.formateDate = this.dateConvert(group.date);
+        group.formateDate = this.dateConvert(group.date)
         if (group && group.articles) {
           let formatArticleItems = group.articles.map((item) => {
             // 判断是否已经访问过
-            item.hasVisited = this.isVisited(item.contentId);
-            return item;
-          }) || [];
-          group.articles = formatArticleItems;
+            item.hasVisited = this.isVisited(item.contentId)
+            return item
+          }) || []
+          group.articles = formatArticleItems
         }
         return group
       })
     }
-    return formatData;
+    return formatData
   },
   /*
   * 将原始日期字符串格式化 '2017-06-12'
@@ -105,42 +105,115 @@ let handler = {
   */
   dateConvert(dateStr) {
     if (!dateStr) {
-      return '';
+      return ''
     }
     let today = new Date(),
       todayYear = today.getFullYear(),
       todayMonth = ('0' + (today.getMonth() + 1)).slice(-2),
-      todayDay = ('0' + today.getDate()).slice(-2);
-    let convertStr = '';
-    let originYear = +dateStr.slice(0, 4);
-    let todayFormat = `${todayYear}-${todayMonth}-${todayDay}`;
+      todayDay = ('0' + today.getDate()).slice(-2)
+    let convertStr = ''
+    let originYear = +dateStr.slice(0, 4)
+    let todayFormat = `${todayYear}-${todayMonth}-${todayDay}`
     if (dateStr === todayFormat) {
-      convertStr = '今日';
+      convertStr = '今日'
     } else if (originYear < todayYear) {
-      let splitStr = dateStr.split('-');
-      convertStr = `${splitStr[0]}年${splitStr[1]}月${splitStr[2]}日`;
+      let splitStr = dateStr.split('-')
+      convertStr = `${splitStr[0]}年${splitStr[1]}月${splitStr[2]}日`
     } else {
       convertStr = dateStr.slice(5).replace('-', '月') + '日'
     }
-    return convertStr;
+    return convertStr
   },
   /*
   * 判断文章是否访问过
   * @param contentId
   */
   isVisited(contentId) {
-    let visitedArticles = app.globalData && app.globalData.visitedArticles || '';
-    return visitedArticles.indexOf(`${contentId}`) > -1;
+    let visitedArticles = app.globalData && app.globalData.visitedArticles || ''
+    return visitedArticles.indexOf(`${contentId}`) > -1
   },
   renderArticle(data) {
     if (data && data.length) {
-      let newList = this.data.articleList.concat(data);
+      let newList = this.data.articleList.concat(data)
       this.setData({
         articleList: newList,
         hiddenLoading: true
       })
     }
+  },
+  /**
+   * 每次触发，先判断是否可以加载更多
+   * 如果满足条件，data.page + 1
+   * 然后调用公共的请求函数
+   */
+  onReachBottom() {
+    if (this.data.hasMore) {
+      let nextPage = this.data.page + 1
+      this.setData({
+        page: nextPage
+      })
+      this.requestArticle()
+    }
+  },
+  onShareAppMessage() {
+    let title = config.defaultShareText || ''
+    return {
+      title: title,
+      path: `/pages/index/index`,
+      success: function (res) {
+        util.alert(res)
+      },
+      fail: function (res) {
+        util.alert(res + 'err share')
+      }
+    }
+  },
+  showDetail(e) {
+    let dataset = e.currentTarget.dataset
+    let item = dataset && dataset.item
+    let contentId = item.contentId || 0
+    // 实现阅读标识的函数
+    this.markRead(contentId)
+    wx.navigateTo({
+      url: `../detail/detail?contentId=${contentId}`
+    })
+  },
+  /**
+   * 保存在globalData中的时候，那么在关闭微信之后，是不可以再次读到记录的，所以要在缓存中存一份
+   */
+  markRead(contentId) {
+    util.getStorageData('visited', (data) => {
+      let newStorage = data
+      if (data) {
+        // 如果当前文章id不存在，也就是data不存在，那么就是还没有阅读,那么就加一项，又因为是字符串，所以直接用模板字符串的方式就是OK的
+        if (data.indexOf(contentId) === -1) {
+          newStorage = `${data},${contentId}`
+        }
+        // 如果data都不存在，那就是用户还没有读过文章
+        else {
+          newStorage = `${contentId}`
+        }
+        /**
+         * 如果添加了新的阅读记录，那么就进行接下来的处理
+         */
+        if (data !== newStorage) {
+          if (app.globalData) {
+            app.globalData.visitedArticles = newStorage
+          }
+          // 给缓存中要存一份
+          util.setStorageData('visited', newStorage, () => {
+            this.resetArticles()
+          })
+        }
+      }
+    })
+  },
+  resetArticles(){
+    let old = this.data.articleList
+    let newArticles = this.formatArticleData(old)
+    this.setData({
+      articleList:newArticles
+    })
   }
-
 }
 Page(handler)
