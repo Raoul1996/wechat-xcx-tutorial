@@ -35,7 +35,7 @@ let handler = {
         let articleData = res.data
         //格式化原始数据
         let formatData = this.formatArticleData(articleData)
-        console.log(formatData)
+        this.renderArticle(formatData)
       }
       /**
        * 如果加载第一页就没有数据，那么说明数据存在异常情况
@@ -87,12 +87,47 @@ let handler = {
     }
     return formatData
   },
-  dateConvert(dataStr) {
-    if (!dataStr) {
+  /*
+    * 将原始日期字符串格式化 '2017-06-12'
+    * return '今日' / 08-21 / 2017-06-12
+    */
+  dateConvert(dateStr) {
+    if (!dateStr) {
       return ''
     }
     let today = new Date()
     let todayYear = today.getFullYear()
+    console.log(`todayYear:${todayYear}`)
+    let todayMonth = ('0' + (today.getMonth() + 1)).slice(-2)
+    let todayDay = ('0' + today.getDay()).slice(-2)
+    let convertStr = ''
+    let originYear = +dateStr.slice(0, 4)
+    let todayFormat = `${todayYear}-${todayMonth}-${todayDay}`
+    if (dateStr === todayFormat) {
+      convertStr = '今日'
+    } else if (originYear < todayYear) {
+      let splitStr = dateStr.split('-')
+      convertStr = `${splitStr[0]}年${splitStr[1]}月${splitStr[2]}日`
+    } else {
+      convertStr = dateStr.slice(5).replace('-', '月') + '日'
+    }
+    return convertStr
+  },
+  /**
+   * 判断文章是否访问过
+   * @param contentId
+   */
+  isVisited(contentId) {
+    let visitedArticles = app.globalData && app.globalData.visitedArticles || ''
+    return visitedArticles.indexOf(`${contentId}`) > -1
+  },
+  renderArticle(data) {
+    if (data && data.length) {
+      let newList = this.data.articleList.concat(data)
+      this.setData({
+        articleList: newList
+      })
+    }
   },
   onReady: function () {
     // 生命周期函数--监听页面初次渲染完成
