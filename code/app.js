@@ -8,7 +8,8 @@ let handler = {
     user: {
       name: '',
       avator: ''
-    }
+    },
+    visitedArticles:''
   }
 };
 App(handler);
