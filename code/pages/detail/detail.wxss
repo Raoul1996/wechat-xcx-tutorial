@@ -124,3 +124,35 @@ page {
     width: 0;
     height: 0
   }
+  .wrapper.content{
+      padding: 0 36rpx 40rpx 36rpx;
+      line-height: 56rpx;
+      color: #333333;
+      font-size: 36rpx;
+      overflow: hidden;
+      word-wrap: break-word;
+  }
+  .wrapper .content .langs_cn,
+  .wrapper .content .para.translate{
+      font-size: 32rpx;
+      color: #666666;
+  }
+  .wrapper .content .langs_cn,
+  .wrapper .content .langs_en,
+  .wrapper .content .para .content .wxParse-p{
+      margin: 44rpx 0;
+  }
+  .wrapper .content image{
+      max-width: 100%;
+      vertical-align: top;
+  }
+  .wrapper .content .tip{
+      color: #999999;
+      font-size: 28rpx;
+      text-align: center;
+      height: 28rpx;
+      line-height: 28rpx;
+  }
+  .wrapper .content .tip-icon{
+      vertical-align: top;
+  }
