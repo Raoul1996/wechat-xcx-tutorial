@@ -1,1 +1,33 @@
-<view class="home"> this is home page </view>
+<view class="wrapper">
+    <view class="group">
+        <view class="group-bar">
+            <view class="group-title on">Today</view>
+        </view>
+        <view class="group-content">
+            <view class="group-content-item">
+                <view class="group-content-item-desc ellipsis-line-3">为什么聪明人总能保持冷静？</view>
+                <image
+                    class="group-content-item-img"
+                    mode="aspectFill"
+                    src="https://n1image.hjfile.cn/mh/2017/06/26/9ffa8c56cfd76cf5159011f4017f022e.jpg"
+                />
+            </view>
+        </view>
+    </view>
+    <view class="group">
+        <view class="group-bar">
+            <view class="group-title on">27 June</view>
+        </view>
+        <view class="group-content">
+            <view class="group-content-item">
+                <view class="group-content-item-desc ellipsis-line-3">与时间有关的英语俚语（四）</view>
+                <image
+                    class="group-content-item-img"
+                    mode="aspectFill"
+                    src="https://n1image.hjfile.cn/mh/2017/06/26/0eb29c4c08e7be93f74ce9ce0fd5a25e.jpg"
+                />
+            </view>
+        </view>
+    </view>
+    <view class="no-more" hidden="">no more passage</view>
+</view>

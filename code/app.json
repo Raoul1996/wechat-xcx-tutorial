@@ -1,14 +1,14 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/detail/detail"
   ],
   "window": {
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Demo",
-    "backgroundColor": "#f8f8f8",
     "backgroundTextStyle": "light",
-    "enablePullDownRefresh": false
+    "navigationBarBackgroundColor": "#4abb3b",
+    "navigationBarTitleText": "iKcamp English study",
+    "navigationBarTextStyle": "#fff",
+    "backgroundColor": "#f8f8f8"
   },
   "networkTimeout": {
     "request": 10000,
